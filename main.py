@@ -286,7 +286,7 @@ def demo2(image_paths, output_dir, cuda):
     probs, ids = gcam.forward(images)
     ids_ = torch.LongTensor([[target_class]] * len(images)).to(device)
     gcam.backward(ids=ids_)
-
+    #breakpoint()
     for target_layer in target_layers:
         print("Generating Grad-CAM @{}".format(target_layer))
 
