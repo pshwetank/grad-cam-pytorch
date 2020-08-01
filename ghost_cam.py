@@ -102,7 +102,6 @@ def apply_gradcam(image_paths, target_layer, output_dir, cuda=0):
     gcam = GradCAM(model=model)
     probs, ids = gcam.forward(images)
     ids_ = torch.FloatTensor([[target_class]] * len(images)).to(device)
-    #print(ids_)
     gcam.backward(ids=ids_)
     regions = gcam.generate(target_layer=target_layer)
     for j in range(len(images)):
@@ -122,9 +121,6 @@ def apply_gradcam(image_paths, target_layer, output_dir, cuda=0):
             gcam=regions[j, 0],
             raw_image=raw_images[j],
         )
-
-
-
 
 if __name__ == '__main__':
     image_dir = 'test_samples/'
