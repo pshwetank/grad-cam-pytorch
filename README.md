@@ -1,6 +1,6 @@
 # Grad-CAM with PyTorch
 
-PyTorch implementation of Grad-CAM (Gradient-weighted Class Activation Mapping) [[1](##references)] in image classification. This repository also contains implementations of vanilla backpropagation, guided backpropagation [[2](##references)], deconvnet [[2](##references)], and guided Grad-CAM [[1](##references)], occlusion sensitivity maps [[3](##references)].
+PyTorch implementation of Grad-CAM (Gradient-weighted Class Activation Mapping) [[1](##references)] in image classification. This repository also contains implementations of vanilla backpropagation, guided backpropagation [[2](##references)], deconvnet [[2](##references)], and guided Grad-CAM [[1](##references)], occlusion sensitivity maps [[3](##references)]. The repository is developed over the original implementation by <a href="https://github.com/kazuto1011">kazuto1011</a>. I have implemented the Grad-cam method for custom architectures written in Pytorch so that you don't have to modify your model definition to obtain Grad-CAM visualisations.
 
 ## Requirements
 
