@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 #
-# Author:   Kazuto Nakashima
-# URL:      http://kazuto1011.github.io
-# Created:  2017-05-26
+# Author:       Kazuto Nakashima
+# Modified by : Shwetank Panwar
+# URL:          http://kazuto1011.github.io
+# Created:      2017-05-26
 
 from collections import Sequence
 
@@ -22,20 +23,21 @@ class _BaseWrapper(object):
         self.handlers = []  # a set of hook function handlers
         random_inp = torch.rand(1,3,224,224).to(self.device)
         self.model_output_size = (self.model(random_inp)).size()[1]
-        #print(self.model_output_size)
 
     def _encode_one_hot(self, ids):
         if (self.model_output_size) ==1:
             one_hot = ids
             one_hot.to(self.device)
         else:
-            one_hot = torch.zeros_like(self.logits).to(self.device)
+            one_hot = torch.zeros_like(self.logits)
             one_hot.scatter_(1, ids, 1.0)
+            one_hot.to(self.device)
         return one_hot
 
     def forward(self, image):
         self.image_shape = image.shape[2:]
         self.logits = self.model(image)
+        del image
         if self.model_output_size == 1:
             self.probs = self.logits
             return self.probs, [0]
@@ -48,8 +50,7 @@ class _BaseWrapper(object):
         Class-specific backpropagation
         """
         one_hot = self._encode_one_hot(ids)
-        #breakpoint()
-        #print(one_hot.size())
+        one_hot.to(self.device)
         self.model.zero_grad()
         self.logits.backward(gradient=one_hot, retain_graph=True)
 

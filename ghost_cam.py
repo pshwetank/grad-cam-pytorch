@@ -93,9 +93,9 @@ def get_files_list(images_path):
 def apply_gradcam(image_paths, target_layer, output_dir, cuda=0):
     target_class = 1.0
     device = get_device(cuda)
-    model = Ghostnet_proto()
-    model.to(device)
-    model.eval()
+    #model = Ghostnet_proto()
+    #model.to(device)
+    #model.eval()
     images_plist = get_files_list(image_paths)
     images, raw_images = load_images(images_plist)
     images = torch.stack(images).to(device)
