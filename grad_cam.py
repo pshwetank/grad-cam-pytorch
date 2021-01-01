@@ -121,12 +121,12 @@ class GradCAM(_BaseWrapper):
     Look at Figure 2 on page 4
     """
 
-    def __init__(self, model, single_usage = True, candidate_layers=None):
+    def __init__(self, model, save_memory = True, candidate_layers=None):
         super(GradCAM, self).__init__(model)
         self.fmap_pool = {}
         self.grad_pool = {}
         self.candidate_layers = candidate_layers  # list
-        self.single_usage = single_usage
+        self.save_memory = save_memory
 
         def save_fmaps(key):
             def forward_hook(module, input, output):
@@ -158,14 +158,12 @@ class GradCAM(_BaseWrapper):
         fmaps = self._find(self.fmap_pool, target_layer)
         grads = self._find(self.grad_pool, target_layer)
         weights = F.adaptive_avg_pool2d(grads, 1)
-        if self.single_usage:
+        if self.save_memory:
             self.logits.zero_()
-            self.model = None
             self.logits = None
-            self.fmap_pool = None
-            self.grad_pool = None
+            self.fmap_pool = {}
+            self.grad_pool = {}
             torch.cuda.empty_cache()
-        #self.model.zero_grad()
         gcam = torch.mul(fmaps, weights).sum(dim=1, keepdim=True)
         gcam = F.relu(gcam)
         gcam = F.interpolate(
@@ -177,7 +175,7 @@ class GradCAM(_BaseWrapper):
         gcam -= gcam.min(dim=1, keepdim=True)[0]
         gcam /= gcam.max(dim=1, keepdim=True)[0]
         gcam = gcam.view(B, C, H, W)
-        if self.single_usage:
+        if self.save_memory:
             gcam = gcam.detach().cpu().numpy()
             torch.cuda.empty_cache()
         return gcam
